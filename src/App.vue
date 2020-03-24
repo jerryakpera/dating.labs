@@ -1,32 +1,29 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Toolbar 
+      v-if="this.$route.path != '/login' && this.$route.path != '/onboarding'"
+    />
+    <content>
+      <div>
+        <router-view />
+      </div>
+    </content>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<script>
+export default {
+  components: {
+    Toolbar: () => import("@/components/core/Toolbar")
   }
 }
+</script>
+
+<style lang="scss">
+@import "./scss/custom.scss";
+
+.goButton {
+  background-color: $mainColor;
+}
+
 </style>
