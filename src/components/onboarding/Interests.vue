@@ -71,7 +71,7 @@ export default {
     },
     filterHobbies() {
       if (this.hobbyInput == "") {
-        this.filteredInterests = this.getInterests.slice(0, 8)
+        this.filteredInterests = this.getInterests.slice(0, 9)
         return
       }
 

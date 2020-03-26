@@ -7,7 +7,6 @@
           *Select two options
         </span>
       </h5>
-      <h6></h6>
       <b-form>
         <b-container class="bv-example-row">
           <b-row class="yoBusinessRow">

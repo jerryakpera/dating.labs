@@ -1,10 +1,16 @@
 <template>
   <div>
-    <Phone v-if="getOnboardingPhase == 0" />
-    <OTP v-if="getOnboardingPhase == 1" />
-    <UserDetails v-if="getOnboardingPhase == 2" />
-    <Interests v-if="getOnboardingPhase == 3" />
-    <YoBusiness v-if="getOnboardingPhase == 4" />
+    <div class="bg">
+      <div class="centerBox">
+        <transition name="fade">
+          <Phone v-if="getOnboardingPhase == 0" />
+          <OTP v-if="getOnboardingPhase == 1" />
+          <UserDetails v-if="getOnboardingPhase == 2" />
+          <Interests v-if="getOnboardingPhase == 3" />
+          <YoBusiness v-if="getOnboardingPhase == 4" />
+        </transition>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -26,3 +32,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import "../scss/custom.scss";
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>
