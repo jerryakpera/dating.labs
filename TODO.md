@@ -1,9 +1,9 @@
 [x] Fine tune onboarding process
   [x] Add job and bio to interests submit
   [x] Edit DOB capture on user details page
-[ ] Create landing page
-[ ] Host on Heroku...!
+[x] Host on Heroku...!
 
+[ ] Create landing page
 
 Questions - 
 [ ] How can we make it different, less shallow?
