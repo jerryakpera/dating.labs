@@ -1,105 +1,134 @@
 <template>
-  <div class="bg">
-    <div class="centerBox">
-      <h6>Enter the verification code we just sent to your phone number</h6>
-      <b-form>
+  <div>
+    <Loading v-if="loading" variant="light" />
+    <div id="snackbar">{{snackbar.msg}}</div>
+    <div v-if="!loading" class="centerBox">
+      <h6>Great. Enter the OTP we just sent to your phone</h6>
+      <p class="link main" @click="resendOTP()">Resend OTP</p>
+      <b-form @keydown.enter.prevent>
         <b-form-group>
           <b-form-input
             type="text"
-            size="lg"
-            v-model="otp1"
+            size="md"
+            v-model="otp"
             class="otpInput"
-          ></b-form-input>
-          <b-form-input
-            type="text"
-            size="lg"
-            v-model="otp2"
-            class="otpInput"
-          ></b-form-input>
-          <b-form-input
-            type="text"
-            size="lg"
-            v-model="otp3"
-            class="otpInput"
-          ></b-form-input>
-          <b-form-input
-            type="text"
-            size="lg"
-            v-model="otp4"
-            class="otpInput"
+            @keydown.enter="resendOTP()"
           ></b-form-input>
         </b-form-group>
         <b-row>
           <b-col>
-            <button
-              type="button"
-              class="loginButton resendButton"
-            >
-              Resend
-            </button> 
-          </b-col>
-          <b-col>
-            <button
-              type="button"
-              class="loginButton nextButton"
-              @click="next()"
-            >
-              <b-icon icon="chevron-right" class="icon"></b-icon>
+            <button type="button" class="iconBtn back" @click="back()">
+              <b-icon icon="chevron-left" class="icon"></b-icon>
             </button>
           </b-col>
+          <b-col>
+            <button type="button" class="button main curved" @click="submitOTP()">Next</button>
+          </b-col>
         </b-row>
-        <p class="textLink">
+        <p
+          class="link main"
+          v-b-modal.modal-center
+          id="toggle-btn"
+          @click="toggleModal"
+        >
           Already have an account? Login
         </p>
       </b-form>
+    </div>
+    <div>
+      <b-modal size="sm" ref="loginModal" centered hide-footer title="Login">
+        <Login />
+      </b-modal>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions } from "vuex";
+const _ = require("../../services/utils");
 export default {
   data: () => ({
-    otp1: "",
-    otp2: "",
-    otp3: "",
-    otp4: ""
+    otp: "",
+    snackbar: {
+      msg: "",
+      color: ""
+    },
+    userDetails: {},
+    loading: false
   }),
+  components: {
+    Loading: () => import("../universal/Loading"),
+    Login: () => import("@/components/onboarding/Login")
+  },
   methods: {
-    ...mapActions(["changePhase"]),
-    next() {
-      this.changePhase("next")
+    ...mapActions(["changePhase", "makeOTPRequest"]),
+    submitOTP() {
+      console.log(this.otp, this.userDetails.otp);
+      if (this.otp == this.userDetails.otp) {
+        this.changePhase("next");
+      } else {
+        this.snackbar.msg = "Incorrect OTP";
+        this.showSnackbar();
+        return;
+      }
+    },
+    resendOTP() {
+      this.loading = true;
+      this.userDetails = _.decodeJSON(_.storage.get("userDetails"));
+      this.$store
+      .dispatch("makeOTPRequest", this.userDetails.phone)
+      .then(otp => {
+        console.log(0, otp);
+        this.snackbar.msg = otp;
+        this.snackbar.color = "danger";
+        this.showSnackbar();
+        this.loading = false;
+      })
+      .catch(() => {
+        this.loading = false;
+        this.snackbar.msg = this.getOTPResponse;
+        this.snackbar.color = "danger";
+        this.showSnackbar();
+      });
+    },
+    back() {
+      this.changePhase("prev");
+    },
+    showSnackbar() {
+      // Get the snackbar DIV
+      var x = document.getElementById("snackbar");
+
+      // Add the "show" class to DIV
+      x.className = "show";
+
+      // After 3 seconds, remove the show class from DIV
+      setTimeout(() => {
+        x.className = x.className.replace("show", "");
+      }, 3000);
+    },
+    toggleModal() {
+      // We pass the ID of the button that we want to return focus to
+      // when the modal has hidden
+      this.$refs['loginModal'].toggle('#toggle-btn')
     }
+  },
+  created() {
+    this.userDetails = _.decodeJSON(_.storage.get("userDetails"));
+
+    window.setTimeout(() => {
+      this.loading = false;
+      this.snackbar.msg = this.userDetails.otp;
+      this.snackbar.color = "danger";
+      this.showSnackbar();
+    }, 500);
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
 @import "../../scss/custom.scss";
 .otpInput {
-  width: 55px;
+  letter-spacing: 5px;
   text-align: center;
-  display: inline-block;
-  margin-right: 27px;
 }
-
-.resendButton {
-  border: 1px solid $mainColor;
-  background-color: rgba(0, 0, 0, 0);
-}
-
-.nextButton {
-  width: 40px;
-  border-radius: 50%;
-  height: 40px;
-  padding: 0;
-  float: right;
-  margin-right: 28px;
-
-  .icon {
-    color: #FFF;
-    font-weight: 600;
-  }
-}
-
 </style>

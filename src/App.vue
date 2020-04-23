@@ -1,16 +1,15 @@
 <template>
   <div id="app">
     <Toolbar 
-      v-if="this.$route.path != '/login' && this.$route.path != '/onboarding'"
+      v-if="this.$route.path != '/login' && this.$route.path != '/onboarding' && this.$route.path != '/welcome'"
     />
     <content>
-      <div>
+      <div class="mainView">
         <router-view />
       </div>
     </content>
   </div>
 </template>
-
 <script>
 export default {
   components: {
@@ -24,6 +23,11 @@ export default {
 
 .goButton {
   background-color: $mainColor;
+}
+
+.mainView {
+  padding: 12px;
+  margin-top: 20px;
 }
 
 </style>

@@ -3,29 +3,27 @@
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
     <div v-if="!loading" class="centerBox">
-      <h6>Nice one! We need your phone number to set things up</h6>
+      <h6>Progress! Spice up your profile with some photos</h6>
       <b-form @submit.prevent>
         <b-input-group size="md" class="mb-3">
           <b-input-group-prepend is-text>
-            <b-icon icon="phone" class="icon"></b-icon>
+            <b-icon icon="image" class="icon"></b-icon>
           </b-input-group-prepend>
-          <b-form-input
-            type="text"
-            placeholder="07 . . . "
-            v-model="phone"
-            @keydown.enter="submitPhone()"
-          ></b-form-input>
+          <b-form-file
+            v-model="file"
+            :state="Boolean(file)"
+            placeholder="Upload photo"
+            drop-placeholder="Drop file here..."
+          ></b-form-file>
         </b-input-group>
         <b-row>
           <b-col>
-            <router-link to="/welcome">
-              <button type="button" class="iconBtn back">
-                <b-icon icon="chevron-left" class="icon"></b-icon>
-              </button>
-            </router-link>
+            <button @click="back()" type="button" class="iconBtn back">
+              <b-icon icon="chevron-left" class="icon"></b-icon>
+            </button>
           </b-col>
           <b-col>
-            <button type="button" class="button main curved" @click="submitPhone()">Next</button>
+            <button type="button" class="button main curved" @click="submitPhotos()">Next</button>
           </b-col>
         </b-row>
         <p
@@ -50,12 +48,13 @@
 import { mapActions, mapGetters } from "vuex";
 export default {
   data: () => ({
-    phone: "",
     loading: false,
     snackbar: {
       msg: "",
       color: ""
-    }
+    },
+    file: null,
+    file2: null
   }),
   components: {
     Loading: () => import("../universal/Loading"),
@@ -66,29 +65,14 @@ export default {
   },
   methods: {
     ...mapActions(["changePhase", "makeOTPRequest"]),
-    submitPhone() {
-      this.loading = true;
-      if (this.phone.length != 10) {
-        this.snackbar.msg = "Enter valid phone";
-        this.snackbar.color = "danger";
-        this.showSnackbar();
-        this.loading = false;
-        return;
-      } else {
-        this.$store
-        .dispatch("makeOTPRequest", this.phone)
-        .then(() => {
-          this.loading = false;
-          this.changePhase("next");
-        })
-        .catch(() => {
-          this.loading = false;
-          this.snackbar.msg = "Couldnt connect. Try again";
-          this.snackbar.color = "danger";
-          this.showSnackbar();
-          return;
-        });
-      }
+    next() {
+      this.changePhase("next");
+    },
+    back() {
+      this.changePhase("prev");
+    },
+    submitPhotos() {
+      this.next()
     },
     showSnackbar() {
       // Get the snackbar DIV

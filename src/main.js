@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+const _ = require("./services/utils")
+
 // Bootstrap
 import { BootstrapVue, BootstrapVueIcons  } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -18,6 +20,8 @@ new Vue({
   store,
   render: h => h(App),
   created() {
-    this.$router.push("/login")
+    if (!_.storage.get("token")) {
+      this.$router.push("/welcome")
+    }
   },
 }).$mount('#app')

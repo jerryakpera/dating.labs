@@ -1,44 +1,64 @@
 <template>
   <div class="bg">
-    <div class="centerBox">
-      <h6>What do you do for fun?</h6>
-      <b-form>
-        <b-input-group
-          size="lg"
-          class="mb-3"
-        >
-          <b-form-input
-            type="text"
-            placeholder="start typing"
-            v-model="hobbyInput"
-            @keyup="filterHobbies"
-          ></b-form-input> 
-        </b-input-group>
-        <div>
+    <Loading v-if="loading" variant="light" />
+    <div class="centerBox" v-if="!loading">
+      <div id="snackbar">{{snackbar.msg}}</div>
+      <h6>Great. What are some of the things you do for fun?</h6>
+      <b-form @submit.prevent>
+        <div :key="componentKey">
+          <div v-for="hobby in hobbies.user" :key="hobby.id" class="hobbyCard active">
+            <div v-if="hobby.state == 1" @click="removeInterest(hobby)">
+              {{hobby.hobby}}
+              <span>
+                <b-icon icon="x" class="icon"></b-icon>
+              </span>
+            </div>
+          </div>
           <div
-            v-for="(hobby, i) in filteredInterests"
-            :key="i"
+            v-for="hobby in hobbies.view"
+            :key="hobby.id"
             class="hobbyCard"
             :class="hobby.state ? 'active': 'inactive'"
           >
-            {{hobby.name}}
-            <span v-if="hobby.state">
-              <b-icon icon="x" class="icon" @click="toggleHobby(i)"></b-icon>
-            </span>
-            <span v-else>
-              <b-icon icon="plus" class="icon" @click="toggleHobby(i)"></b-icon>
-            </span>
+            <div v-if="hobby.state == 1" @click="toggleHobby(hobby)">
+              {{hobby.hobby}}
+              <span>
+                <b-icon icon="x" class="icon"></b-icon>
+              </span>
+            </div>
+            <div v-else @click="toggleHobby(hobby)">
+              {{hobby.hobby}}
+              <span>
+                <b-icon icon="plus" class="icon"></b-icon>
+              </span>
+            </div>
           </div>
         </div>
-        <button
-          type="button"
-          class="loginButton"
+        <b-input-group size="md" class="mb-3">
+          <b-form-input
+            type="text"
+            placeholder="add"
+            v-model="hobbyInput"
+            @keyup.enter.prevent="addNewInterest"
+          ></b-form-input>
+        </b-input-group>
+        <b-row class="buttonRow">
+          <b-col>
+            <button type="button" class="iconBtn back" @click="back()">
+              <b-icon icon="chevron-left" class="icon"></b-icon>
+            </button>
+          </b-col>
+          <b-col>
+            <button type="button" class="button main curved" @click="submitUserInterests()">Next</button>
+          </b-col>
+        </b-row>
+        <p
+          class="link main"
+          v-b-modal.modal-center
+          id="toggle-btn"
           @click="next()"
         >
-          Next
-        </button>
-        <p class="textLink">
-          Already have an account? Login
+          Skip and start swiping
         </p>
       </b-form>
     </div>
@@ -46,69 +66,229 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex";
+const _ = require("../../services/utils");
 export default {
   data: () => ({
+    loading: false,
+    componentKey: 0,
     user: {
       phone: "",
       dob: "",
-      email: "",
+      email: ""
     },
     hobbyInput: "",
+    hobbies: {
+      all: [],
+      userCount: 0,
+      view: [],
+      user: []
+    },
+    snackbar: {
+      msg: "",
+      color: ""
+    },
+    userInterests: [],
+    viewInterests: [],
     filteredInterests: []
   }),
   methods: {
     ...mapActions(["changePhase"]),
     next() {
-      this.changePhase("next")
+      this.changePhase("next");
     },
-    toggleHobby(i) {
-      if (this.filteredInterests[i].state == 0) {
-        this.filteredInterests[i].state = 1
-      } else {
-        this.filteredInterests[i].state = 0
-      }
-    },
-    filterHobbies() {
-      if (this.hobbyInput == "") {
-        this.filteredInterests = this.getInterests.slice(0, 9)
-        return
-      }
+    processInterests(hobbies) {
+      this.hobbies.view = [];
+      this.hobbies.all = [];
 
-      const filtered = this.getInterests.filter(hobby => {
-        if (hobby.name.includes(this.hobbyInput) || hobby.state == 1) {
-          return hobby
+      hobbies.forEach((hobby, i) => {
+        if (i < 11) {
+          this.hobbies.view.push(hobby);
         }
-      })
+        this.hobbies.all.push(hobby);
+      });
+    },
+    toggleHobby(hobby) {
+      let activeHobbies =
+        this.hobbies.all.filter(hobby => hobby.state).length +
+        this.hobbies.user.length;
 
-      this.filteredInterests = filtered
+      if (activeHobbies >= 10 && !hobby.state) {
+        this.snackbar.msg = "Only 10 interests";
+        this.snackbar.color = "danger";
+        this.showSnackbar();
+        return;
+      }
+
+      this.hobbies.all.forEach(h => {
+        if (hobby.id == h.id) {
+          h.state = !h.state;
+        }
+      });
+
+      this.hobbyInput = "";
+      this.sortInterests();
+    },
+    sortInterests() {
+      const sorted = this.hobbies.all.sort((a, b) => b.state - a.state);
+
+      this.processInterests(sorted);
+    },
+    addNewInterest() {
+      const names = [];
+      this.hobbies.all.forEach(hobby => {
+        names.push(hobby.hobby);
+      });
+
+      if (names.includes(this.hobbyInput)) {
+        this.hobbies.all.forEach(hobby => {
+          if (hobby.hobby == this.hobbyInput) {
+            this.toggleHobby(hobby);
+          }
+        });
+        return;
+      }
+
+      const newInterest = {
+        id: _.getID(),
+        hobby: this.hobbyInput,
+        state: 1
+      };
+
+      this.hobbyInput = "";
+      this.hobbies.user.push(newInterest);
+      this.processInterests(this.hobbies.all);
+    },
+    removeInterest(hobby) {
+      const userInterests = this.hobbies.user.filter(v => v.id != hobby.id);
+
+      this.hobbies.user = [...userInterests];
+    },
+    searchInterests(value) {
+      const filtered = [];
+
+      this.hobbies.all.filter(hobby => {
+        if (hobby.hobby.includes(value)) {
+          filtered.push(hobby);
+        }
+      });
+
+      this.hobbies.view = [];
+
+      filtered.forEach((hobby, i) => {
+        if (i < 11) this.hobbies.view.push(hobby);
+      });
+    },
+    submitUserInterests() {
+      this.loading = true;
+
+      const userInterests = {
+        existing_interest: [],
+        id: 0,
+        new_interests: []
+      };
+
+      this.hobbies.user.forEach(hobby =>
+        userInterests.new_interests.push(hobby.hobby)
+      );
+
+      this.hobbies.all.forEach(hobby => {
+        if (hobby.state == 1) {
+          delete hobby.state;
+          userInterests.existing_interest.push(hobby);
+        }
+      });
+
+      let user = _.storage.get("userDetails");
+      user = _.decodeJSON(user);
+
+      userInterests.id = user.id;
+
+      this.$store
+      .dispatch("submitUserInterestsRequest", userInterests)
+      .then(() => {
+        this.loading = false;
+        this.next();
+      })
+      .catch(() => {
+        this.loading = false;
+      });
+    },
+    back() {
+      this.changePhase("prev");
+    },
+    showSnackbar() {
+      // Get the snackbar DIV
+      var x = document.getElementById("snackbar");
+
+      // Add the "show" class to DIV
+      x.className = "show";
+
+      // After 3 seconds, remove the show class from DIV
+      setTimeout(() => {
+        x.className = x.className.replace("show", "");
+      }, 3000);
     }
   },
   computed: {
     ...mapGetters(["getInterests"])
   },
+  components: {
+    Loading: () => import("../universal/Loading")
+  },
+  watch: {
+    hobbyInput(v) {
+      if (v.trim().length == 0) {
+        this.processInterests(this.getInterests);
+      } else {
+        this.searchInterests(v);
+      }
+    }
+  },
   created() {
-    this.filteredInterests = this.getInterests.slice(0, 8)
+    this.loading = true;
+    this.$store
+    .dispatch("fetchAllInterests")
+    .then(res => {
+      this.loading = false;
+      this.processInterests(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
 @import "../../scss/custom.scss";
 
 .radioLabel {
-  color: #FFF;
+  color: #fff;
 }
 
 .hobbyCard {
   padding: 5px 5px 5px 10px;
   display: inline-block;
-  color: #FFF;
+  color: #fff;
   text-transform: lowercase;
   margin: 10px 5px;
   font-size: 0.8em;
   border-radius: 15px;
-  border: 1px solid #FFF;
+  border: 1px solid #fff;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $mainColor;
+    border: 1px solid $mainColor;
+    box-shadow: 0 1px 1px #000;
+
+    .icon {
+      color: #fff;
+    }
+  }
 
   .icon {
     margin-left: 12px;
@@ -118,11 +298,11 @@ export default {
   &.active {
     background-color: $mainColor;
     border: 1px solid $mainColor;
-    color: #FFF;
+    color: #fff;
 
     .icon {
       margin-left: 12px;
-      color: #FFF;
+      color: #fff;
     }
   }
 }

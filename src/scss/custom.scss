@@ -4,6 +4,7 @@ $bgColor: #262628;
 
 $font-family-1: 'Baloo 2', cursive;
 $font-family-2: 'Open Sans Condensed', sans-serif;
+$font-family-3: 'Montserrat', sans-serif;
 
 $primary   : #ff8b01;
 $secondary : #3e505b;
@@ -14,3 +15,85 @@ $dark      : #000807;
 $negative  : #b80c09;
 $info      : #31CCEC;
 $warning   : #faa916;
+
+.link  {
+  font-size: 0.8em;
+  cursor: pointer;
+  margin: 5px 0;
+
+  &.main {
+    color: $mainColor;
+  }
+}
+
+.button {
+  padding: 8px 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 0;
+  font-size: 0.8em;
+
+  &.curved {
+    border-radius: 30px;
+  }
+  
+  &.main {
+  width: 100%;
+  background-color: $mainColor;
+  color: #FFF;
+  }
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  background-color: #FFF;
+  outline: none;
+  border: 0;
+  box-shadow: 0 2px 3px #000807;
+  
+  &.back {
+    float: left;
+  }
+  
+  &.next {
+    float: right;
+  }
+
+  .icon {
+    color: $mainColor;
+    font-weight: bold;
+  }
+}
+
+.borderBtn {
+  padding: 10px 50px;
+  margin: 0px 15px;
+  border-radius: 25px;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 2px 3px #000;
+  background: rgba(0, 0, 0, 0.3);
+  
+  &.main {
+    border: 1px solid $mainColor;
+    color: $mainColor;
+  }
+  
+  &.blue {
+    border: 1px solid $info; 
+    color: $info;
+  }
+}
+
+.centerBox {
+  width: 350px;
+  margin: 150px auto;
+}
+
+.icon {
+  color: $mainColor;
+}
