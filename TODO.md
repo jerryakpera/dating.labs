@@ -3,7 +3,7 @@
   [x] Edit DOB capture on user details page
 [x] Host on Heroku...!
 
-[ ] Create landing page
+[x] Create landing page
 
 Questions - 
 [ ] How can we make it different, less shallow?
