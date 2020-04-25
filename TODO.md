@@ -1,7 +1,7 @@
 [x] Fine tune onboarding process
   [x] Add job and bio to interests submit
   [x] Edit DOB capture on user details page
-[x] Host on Heroku...!
+[ ] Host on Heroku...!
 
 [x] Create landing page
 
