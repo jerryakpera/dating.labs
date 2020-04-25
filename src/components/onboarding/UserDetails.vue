@@ -131,7 +131,7 @@ export default {
         return;
       }
 
-      userDetails.dob = `${date}/${month}/${year}`
+      userDetails.dob = `${year}-${month}-${date}`
 
       delete userDetails.otp;
       delete userDetails.confirmPassword;
