@@ -1,5 +1,5 @@
 <template>
-  <div class="bg">
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div class="centerBox" v-if="!loading">
       <div id="snackbar">{{snackbar.msg}}</div>
@@ -34,7 +34,7 @@
             </div>
           </div>
         </div>
-        <b-input-group size="md" class="mb-3">
+        <b-input-group size="md">
           <b-form-input
             type="text"
             placeholder="add"
@@ -262,48 +262,6 @@ export default {
 
 <style scoped lang="scss">
 @import "../../scss/custom.scss";
+@import "../../scss/onboarding/interests.scss";
 
-.radioLabel {
-  color: #fff;
-}
-
-.hobbyCard {
-  padding: 5px 5px 5px 10px;
-  display: inline-block;
-  color: #fff;
-  text-transform: lowercase;
-  margin: 10px 5px;
-  font-size: 0.8em;
-  border-radius: 15px;
-  border: 1px solid #fff;
-
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: $mainColor;
-    border: 1px solid $mainColor;
-    box-shadow: 0 1px 1px #000;
-
-    .icon {
-      color: #fff;
-    }
-  }
-
-  .icon {
-    margin-left: 12px;
-    cursor: pointer;
-  }
-
-  &.active {
-    background-color: $mainColor;
-    border: 1px solid $mainColor;
-    color: #fff;
-
-    .icon {
-      margin-left: 12px;
-      color: #fff;
-    }
-  }
-}
 </style>

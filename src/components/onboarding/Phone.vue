@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
     <div v-if="!loading" class="centerBox">
       <h6>Nice one! We need your phone number to set things up</h6>
-      <b-form @submit.prevent>
+      <b-form @keydown.enter.prevent="submitPhone()">
         <b-input-group size="md" class="mb-3">
           <b-input-group-prepend is-text>
             <b-icon icon="phone" class="icon"></b-icon>
@@ -66,6 +66,12 @@ export default {
   },
   methods: {
     ...mapActions(["changePhase", "makeOTPRequest"]),
+    next() {
+      this.changePhase("next");
+    },
+    back() {
+      this.changePhase("prev");
+    },
     submitPhone() {
       this.loading = true;
       if (this.phone.length != 10) {
@@ -113,6 +119,7 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../scss/custom.scss";
+// @import "../../scss/onboarding/welcome.scss";
 
 /* The snackbar - position it at the bottom and in the middle of the screen */
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
     <div v-if="!loading" class="centerBox">

@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
-    <div v-if="!loading" class="centerBox centerBoxUp">
+    <div v-if="!loading" class="centerBox">
       <h6>Finally, tell us a little about yourself...</h6>
       <b-form>
-        <b-input-group size="md" class="mb-3">
+        <b-input-group size="md" class="mb-1">
           <b-form-input
             type="text"
             placeholder="what do you do?"
@@ -13,7 +13,7 @@
             @keyup.enter.prevent="submitInfo()"
           ></b-form-input>
         </b-input-group>
-        <b-input-group size="md" class="mb-3">
+        <b-input-group class="mb-3">
           <b-form-textarea
             id="textarea"
             v-model="user.bio"
@@ -104,11 +104,4 @@ export default {
 <style scoped lang="scss">
 @import "../../scss/custom.scss";
 
-.radioLabel {
-  color: #fff;
-}
-
-.centerBoxUp {
-  margin-top: -60px;
-}
 </style>

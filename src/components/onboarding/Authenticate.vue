@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
-    <div v-if="!loading" class="centerBox centerBoxUp">
+    <div v-if="!loading" class="centerBox">
       <h6>Your account has been created. Login to continue</h6>
-      <b-form>
-        <b-input-group size="sm" class="mb-3">
+      <b-form @keydown.enter.prevent="logUserIn()">
+        <b-input-group class="mb-2">
           <b-input-group-prepend is-text>
             <b-icon icon="person" class="icon"></b-icon>
           </b-input-group-prepend>
           <b-form-input type="text" placeholder="email" v-model="user.email"></b-form-input>
         </b-input-group>
 
-        <b-input-group size="sm" class="mb-3">
+        <b-input-group class="mb-2">
           <b-input-group-prepend is-text>
             <b-icon icon="unlock" class="icon"></b-icon>
           </b-input-group-prepend>
@@ -98,11 +98,4 @@ export default {
 <style scoped lang="scss">
 @import "../../scss/custom.scss";
 
-.radioLabel {
-  color: #fff;
-}
-
-.centerBoxUp {
-  margin-top: -60px;
-}
 </style>

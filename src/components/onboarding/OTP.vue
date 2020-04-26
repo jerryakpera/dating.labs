@@ -1,20 +1,22 @@
 <template>
-  <div>
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
     <div v-if="!loading" class="centerBox">
       <h6>Great. Enter the OTP we just sent to your phone</h6>
       <p class="link main" @click="resendOTP()">Resend OTP</p>
-      <b-form @keydown.enter.prevent>
-        <b-form-group>
+      <b-form @keydown.enter.prevent="submitOTP()">
+        <b-input-group size="md" class="mb-3">
+          <b-input-group-prepend is-text>
+            <b-icon icon="chat-square" class="icon"></b-icon>
+          </b-input-group-prepend>
           <b-form-input
             type="text"
-            size="md"
             v-model="otp"
             class="otpInput"
-            @keydown.enter="resendOTP()"
+            @keydown.enter.prevent="submitOTP()"
           ></b-form-input>
-        </b-form-group>
+        </b-input-group>
         <b-row>
           <b-col>
             <button type="button" class="iconBtn back" @click="back()">
@@ -62,6 +64,12 @@ export default {
   },
   methods: {
     ...mapActions(["changePhase", "makeOTPRequest"]),
+    next() {
+      this.changePhase("next");
+    },
+    back() {
+      this.changePhase("prev");
+    },
     submitOTP() {
       console.log(this.otp, this.userDetails.otp);
       if (this.otp == this.userDetails.otp) {
@@ -90,9 +98,6 @@ export default {
         this.snackbar.color = "danger";
         this.showSnackbar();
       });
-    },
-    back() {
-      this.changePhase("prev");
     },
     showSnackbar() {
       // Get the snackbar DIV
@@ -127,6 +132,8 @@ export default {
 
 <style scoped lang="scss">
 @import "../../scss/custom.scss";
+// @import "../../scss/onboarding/welcome.scss";
+
 .otpInput {
   letter-spacing: 5px;
   text-align: center;

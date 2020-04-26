@@ -1,36 +1,41 @@
 <template>
-  <div>
+  <div class="mainBox">
     <Loading v-if="loading" variant="light" />
     <div id="snackbar">{{snackbar.msg}}</div>
-    <div v-if="!loading" class="centerBox centerBoxUp">
+    <div v-if="!loading" class="centerBox">
       <h6>Before we get started tell us about yourself</h6>
-      <b-form>
-        <b-input-group size="md" class="mb-3">
+    
+      <b-form @keydown.enter.prevent="submitUserDetails()">
+        <b-input-group size="md" class="mb-2">
           <b-input-group-prepend is-text>
             <b-icon icon="person" class="icon"></b-icon>
           </b-input-group-prepend>
-          <b-form-input type="text" placeholder="name" v-model="user.name"></b-form-input>
+          <b-form-input 
+            type="text" 
+            placeholder="name" 
+            v-model="user.name"
+          ></b-form-input>
         </b-input-group>
 
-        <b-input-group size="md" class="mb-3">
+        <b-input-group>
           <b-form-datepicker id="example-datepicker" v-model="user.dob" class="mb-2"></b-form-datepicker>
         </b-input-group>
 
-        <b-input-group size="md" class="mb-3">
+        <b-input-group class="mb-2">
           <b-input-group-prepend is-text>
             <b-icon icon="envelope" class="icon"></b-icon>
           </b-input-group-prepend>
           <b-form-input type="text" placeholder="email" v-model="user.email"></b-form-input>
         </b-input-group>
 
-        <b-input-group size="md" class="mb-1">
+        <b-input-group class="mb-1">
           <b-input-group-prepend is-text>
             <b-icon icon="unlock" class="icon"></b-icon>
           </b-input-group-prepend>
           <b-form-input type="password" v-model="user.password" placeholder="password"></b-form-input>
         </b-input-group>
 
-        <b-input-group size="md" class="mb-3">
+        <b-input-group class="mb-3">
           <b-input-group-prepend is-text>
             <b-icon icon="unlock" class="icon"></b-icon>
           </b-input-group-prepend>
@@ -56,8 +61,20 @@
             <button type="button" class="button main curved" @click="submitUserDetails()">Next</button>
           </b-col>
         </b-row>
-        <p class="link main">Already have an account? Login</p>
+        <p
+          class="link main"
+          v-b-modal.modal-center
+          id="toggle-btn"
+          @click="toggleModal"
+        >
+          Already have an account? Login
+        </p>
       </b-form>
+    </div>
+    <div>
+      <b-modal size="sm" ref="loginModal" centered hide-footer title="Login">
+        <Login />
+      </b-modal>
     </div>
   </div>
 </template>
@@ -85,10 +102,17 @@ export default {
     userDetails: {}
   }),
   components: {
-    Loading: () => import("../universal/Loading")
+    Loading: () => import("../universal/Loading"),
+    Login: () => import("@/components/onboarding/Login")
   },
   methods: {
     ...mapActions(["changePhase"]),
+    next() {
+      this.changePhase("next");
+    },
+    back() {
+      this.changePhase("back");
+    },
     submitUserDetails() {
       this.loading = true;
       const userDetails = {
@@ -138,20 +162,14 @@ export default {
 
       console.log(userDetails)
       this.$store
-        .dispatch("makeUserDetailsRequest", userDetails)
-        .then(() => {
-          this.changePhase("next");
-        })
-        .catch(() => {
-          this.loading = false;
-        });
+      .dispatch("makeUserDetailsRequest", userDetails)
+      .then(() => {
+        this.changePhase("next");
+      })
+      .catch(() => {
+        this.loading = false;
+      });
       // _.storage.save("userDetails", _.encodeJSON(userDetails))
-    },
-    next() {
-      this.changePhase("next");
-    },
-    back() {
-      this.changePhase("back");
     },
     showSnackbar() {
       // Get the snackbar DIV
@@ -164,6 +182,11 @@ export default {
       setTimeout(() => {
         x.className = x.className.replace("show", "");
       }, 3000);
+    },
+    toggleModal() {
+      // We pass the ID of the button that we want to return focus to
+      // when the modal has hidden
+      this.$refs['loginModal'].toggle('#toggle-btn')
     }
   },
   created() {
