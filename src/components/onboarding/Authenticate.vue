@@ -77,16 +77,16 @@ export default {
       };
 
       this.$store
-        .dispatch("authenticate", userDetails)
-        .then(() => {
-          this.loading = false;
-          this.next();
-          // this.$router.push("/")
-        })
-        .catch(err => {
-          this.loading = false;
-          console.log(err);
-        });
+      .dispatch("authenticate", userDetails)
+      .then(() => {
+        this.loading = false;
+        this.next();
+        // this.$router.push("/")
+      })
+      .catch(err => {
+        this.loading = false;
+        console.log(err);
+      });
     }
   },
   created() {

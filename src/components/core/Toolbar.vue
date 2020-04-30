@@ -10,6 +10,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <b-nav-item href="#">Matches</b-nav-item>
           <b-nav-item href="#">Events</b-nav-item>
           <b-nav-item href="#">Chat</b-nav-item>
           <b-nav-item-dropdown right>

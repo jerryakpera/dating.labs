@@ -3,9 +3,8 @@
     <div>
       <Loading v-if="loading" variant="dark" />
       <div id="snackbar">{{snackbar.msg}}</div>
-      <b-form v-if="!loading">
+      <b-form v-if="!loading" @keydown.enter.prevent="logUserIn()">
         <b-input-group
-          size="sm"
           class="mb-3"
         >
           <b-input-group-prepend is-text>
@@ -19,7 +18,6 @@
         </b-input-group>
 
         <b-input-group
-          size="sm"
           class="mb-3"
         >
           <b-input-group-prepend is-text>
@@ -90,7 +88,6 @@ export default {
 
 <style lang="scss">
 @import "../../scss/custom.scss";
-.loginForm {
-  width: 30%;
-}
+@import "../../scss/onboarding/login.scss";
+
 </style>

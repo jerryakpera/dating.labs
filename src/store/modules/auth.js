@@ -29,13 +29,13 @@ const actions = {
       }
       AXIOS.post("/authenticate", user)
       .then(res => {
-        const token = {
-          accessToken: res.data.token,
-          expiry: res.data.expiration
-        }
-
         if (res.status == 200) {
           if (res.data.message.status == "00") {
+            const token = {
+              accessToken: res.data.token,
+              expiry: res.data.expiration
+            }
+            console.log("TOKEN: ", token.accessToken)    
             commit("login", token)
             _.storage.save("token", _.encodeJSON(token))
             resolve("pass")
@@ -61,6 +61,15 @@ const actions = {
       _.storage.remove("token")
       resolve()      
     })
+  },
+  checkLoginStatus({commit}) {
+    const userEncodedData = _.storage.get("token")
+
+    if (userEncodedData) {
+      commit("login")
+    } else {
+      commit("logout")
+    }
   }
 }
 

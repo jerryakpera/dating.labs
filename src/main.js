@@ -20,8 +20,16 @@ new Vue({
   store,
   render: h => h(App),
   created() {
-    if (!_.storage.get("token")) {
-      this.$router.push("/welcome")
+    this.checkLogin()
+  },
+  methods: {
+    checkLogin()  {
+      store.dispatch("checkLoginStatus")
+      if (!_.storage.get("issuetrakruser")) {
+        if (this.$route.path != "/welcome") router.push("/welcome")
+      } else {
+        router.push("/")
+      }
     }
   },
 }).$mount('#app')
